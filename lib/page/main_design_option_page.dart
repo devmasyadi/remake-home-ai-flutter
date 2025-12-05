@@ -47,7 +47,6 @@ class MainDesignOptionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-
     return Scaffold(
       extendBody: true,
       body: Stack(
@@ -60,24 +59,6 @@ class MainDesignOptionPage extends StatelessWidget {
               colorBlendMode: BlendMode.darken,
             ),
           ),
-          // Positioned.fill(
-          //   child: Container(
-          //     decoration: BoxDecoration(
-          //       // Background gradient inspired by the reference: warm dark base with a subtle amber glow.
-          //       gradient: LinearGradient(
-          //         begin: Alignment.topCenter,
-          //         end: Alignment.bottomCenter,
-          //         colors: const [
-          //           Color(0xFF181310),
-          //           Color(0xFF1E1712),
-          //           Color(0xFF241A13),
-          //           Color(0xFF2A1F17),
-          //         ],
-          //         stops: const [0.0, 0.35, 0.65, 1.0],
-          //       ),
-          //     ),
-          //   ),
-          // ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
