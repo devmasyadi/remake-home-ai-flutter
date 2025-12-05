@@ -52,26 +52,32 @@ class MainDesignOptionPage extends StatelessWidget {
       extendBody: true,
       body: Stack(
         children: [
-          // Positioned.fill(
-          //   child: Image.asset(
-          //     'mockup_design/main_design_options.png',
-          //     fit: BoxFit.cover,
-          //   ),
-          // ),
           Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.55),
-                    Colors.black.withOpacity(0.15),
-                  ],
-                ),
-              ),
+            child: Image.network(
+              'https://lh3.googleusercontent.com/aida-public/AB6AXuAUA67Tx0Hv62Qa6LXJ7t2_t01-647IyWctW4PkrFCUN97e2hkt3SuaHS8ItTeSjI401-kt5owHpvtcE4urGIJTsvOPXuduGqdC6WE2YU9pLxEEbI92R5WIjoFNLl7UMRxJmAzCYiIMZRTBNNDRpDqiP_QtWvFMyQndB7B2ylqrflZiJj-IFM2I-T9kYIpritmRFuLXz8MhTxC4ZiK9kz3cE2Ty8Q4OWsHqMGzJDHjtDlrSTFJ47wg-n7uGJ-7nPi98ZDaJmiFe_mE',
+              fit: BoxFit.cover,
+              color: Colors.black.withValues(alpha: 0.6),
+              colorBlendMode: BlendMode.darken,
             ),
           ),
+          // Positioned.fill(
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       // Background gradient inspired by the reference: warm dark base with a subtle amber glow.
+          //       gradient: LinearGradient(
+          //         begin: Alignment.topCenter,
+          //         end: Alignment.bottomCenter,
+          //         colors: const [
+          //           Color(0xFF181310),
+          //           Color(0xFF1E1712),
+          //           Color(0xFF241A13),
+          //           Color(0xFF2A1F17),
+          //         ],
+          //         stops: const [0.0, 0.35, 0.65, 1.0],
+          //       ),
+          //     ),
+          //   ),
+          // ),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -118,7 +124,7 @@ class MainDesignOptionPage extends StatelessWidget {
                             crossAxisCount: 2,
                             mainAxisSpacing: 14,
                             crossAxisSpacing: 14,
-                            childAspectRatio: 0.9,
+                            childAspectRatio: 1.0,
                           ),
                       physics: const BouncingScrollPhysics(),
                       itemCount: _actions.length,
