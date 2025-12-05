@@ -1,16 +1,23 @@
 import 'dart:ui';
 
+import 'package:ai_home_design/page/upload_room_photo_page.dart';
 import 'package:flutter/material.dart';
 
 class MainDesignOptionPage extends StatelessWidget {
   const MainDesignOptionPage({super.key});
 
-  List<ActionOption> get _actions => const [
+  List<ActionOption> get _actions => [
     ActionOption(
       icon: Icons.home_outlined,
       title: 'Interior Design',
       subtitle: 'Redesign your living space',
       color: Color(0xFFE4C08E),
+      onTap: (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UploadRoomPhotoPage()),
+        );
+      },
     ),
     ActionOption(
       icon: Icons.apartment,
@@ -52,11 +59,27 @@ class MainDesignOptionPage extends StatelessWidget {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.network(
-              'https://lh3.googleusercontent.com/aida-public/AB6AXuAUA67Tx0Hv62Qa6LXJ7t2_t01-647IyWctW4PkrFCUN97e2hkt3SuaHS8ItTeSjI401-kt5owHpvtcE4urGIJTsvOPXuduGqdC6WE2YU9pLxEEbI92R5WIjoFNLl7UMRxJmAzCYiIMZRTBNNDRpDqiP_QtWvFMyQndB7B2ylqrflZiJj-IFM2I-T9kYIpritmRFuLXz8MhTxC4ZiK9kz3cE2Ty8Q4OWsHqMGzJDHjtDlrSTFJ47wg-n7uGJ-7nPi98ZDaJmiFe_mE',
+            child: Image.asset(
+              'assets/images/bg_home.png',
               fit: BoxFit.cover,
-              color: Colors.black.withValues(alpha: 0.6),
+              color: Colors.black.withValues(alpha: 0.2),
               colorBlendMode: BlendMode.darken,
+            ),
+          ),
+          Positioned.fill(
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xF015191C),
+                    Color(0xD0121819),
+                    Color(0xCC0F231D),
+                  ],
+                  stops: [0.0, 0.45, 1.0],
+                ),
+              ),
             ),
           ),
           SafeArea(
@@ -135,52 +158,64 @@ class _ActionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    final cardRadius = BorderRadius.circular(22);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
+      borderRadius: cardRadius,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withOpacity(0.12),
-                Colors.white.withOpacity(0.05),
-              ],
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              option.onTap?.call(context);
+            },
+            borderRadius: cardRadius,
+            splashColor: Colors.white.withOpacity(0.08),
+            highlightColor: Colors.white.withOpacity(0.05),
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.white.withOpacity(0.12),
+                    Colors.white.withOpacity(0.05),
+                  ],
+                ),
+                borderRadius: cardRadius,
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 14,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _IconBadge(color: option.color, icon: option.icon),
+                  const Spacer(),
+                  Text(
+                    option.title,
+                    style: textTheme.titleMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    option.subtitle,
+                    style: textTheme.bodySmall?.copyWith(
+                      color: Colors.white70,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 14,
-                offset: const Offset(0, 8),
-              ),
-            ],
-          ),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _IconBadge(color: option.color, icon: option.icon),
-              const Spacer(),
-              Text(
-                option.title,
-                style: textTheme.titleMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                option.subtitle,
-                style: textTheme.bodySmall?.copyWith(
-                  color: Colors.white70,
-                  height: 1.3,
-                ),
-              ),
-            ],
           ),
         ),
       ),
@@ -220,18 +255,28 @@ class _RoundIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(16);
     return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: radius,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: radius,
+            splashColor: Colors.white.withOpacity(0.12),
+            highlightColor: Colors.white.withOpacity(0.08),
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.12),
+                borderRadius: radius,
+                border: Border.all(color: Colors.white.withOpacity(0.08)),
+              ),
+              child: Icon(icon, size: 20, color: Colors.white),
+            ),
           ),
-          child: Icon(icon, size: 20, color: Colors.white),
         ),
       ),
     );
@@ -301,26 +346,38 @@ class _BottomNavBar extends StatelessWidget {
               final Color activeColor = const Color(0xFFE4C08E);
 
               return Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      item.icon,
-                      size: 24,
-                      color: isSelected ? activeColor : Colors.white70,
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      item.label,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: isSelected ? activeColor : Colors.white70,
-                        fontWeight: isSelected
-                            ? FontWeight.w600
-                            : FontWeight.w500,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(18),
+                    splashColor: Colors.white.withOpacity(0.08),
+                    highlightColor: Colors.white.withOpacity(0.05),
+                    onTap: () {},
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            item.icon,
+                            size: 24,
+                            color: isSelected ? activeColor : Colors.white70,
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            item.label,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isSelected ? activeColor : Colors.white70,
+                              fontWeight: isSelected
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
               );
             }),
@@ -344,10 +401,12 @@ class ActionOption {
     required this.title,
     required this.subtitle,
     required this.color,
+    this.onTap,
   });
 
   final IconData icon;
   final String title;
   final String subtitle;
   final Color color;
+  final Function(BuildContext context)? onTap;
 }
