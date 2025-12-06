@@ -26,6 +26,60 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     'https://picsum.photos/seed/after/900/1200',
   );
   double _reveal = 0.52;
+  bool _isGenerating = false;
+  double _generationProgress = 0.2;
+  String _generationStatus = 'Queued (2/10)';
+  bool _hasResultReady = false;
+
+  final List<_PriceSection> _priceSections = const [
+    _PriceSection(
+      title: 'Furniture',
+      items: [
+        _PriceItem(
+          brand: 'IKEA',
+          name: 'Ektorp Sofa',
+          description: '3-seat, beige',
+          price: 799,
+          imageUrl: 'https://picsum.photos/seed/sofa/300/200',
+          actionLabel: 'View Product',
+        ),
+        _PriceItem(
+          brand: 'Wayfair',
+          name: 'Walnut Coffee Table',
+          description: 'Solid wood',
+          price: 350,
+          imageUrl: 'https://picsum.photos/seed/table/300/200',
+          actionLabel: 'View Product',
+        ),
+      ],
+    ),
+    _PriceSection(
+      title: 'Lighting',
+      items: [
+        _PriceItem(
+          brand: 'Philips Hue',
+          name: 'Smart Floor Lamp',
+          description: 'Warm white',
+          price: 220,
+          imageUrl: 'https://picsum.photos/seed/lamp/300/200',
+          actionLabel: 'View Product',
+        ),
+      ],
+    ),
+    _PriceSection(
+      title: 'Paint',
+      items: [
+        _PriceItem(
+          brand: 'Benjamin Moore',
+          name: 'Chantilly Lace',
+          description: 'OC-65',
+          price: 65,
+          imageUrl: 'https://picsum.photos/seed/paint/300/200',
+          actionLabel: 'Copy Code',
+        ),
+      ],
+    ),
+  ];
 
   final List<_StyleOption> _styles = const [
     _StyleOption(
@@ -62,6 +116,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   }
 
   void _handleNavTap(int index) {
+    if (_isGenerating) return;
     if (index >= 1 && !_hasUploaded) {
       _showToast('Upload a room photo first.');
       return;
@@ -70,7 +125,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       _showToast('Select a design style first.');
       return;
     }
-    if (index <= 3) {
+    if (index >= 3 && !_hasResultReady) {
+      _showToast('Generate a result first.');
+      return;
+    }
+    if (index <= 4) {
       _goToStep(index);
     } else {
       _showToast('This step is coming soon.');
@@ -78,6 +137,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   }
 
   void _handleBack() {
+    if (_isGenerating) return;
     if (_currentStep == 0) {
       Navigator.pop(context);
     } else {
@@ -105,12 +165,17 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     }
 
     if (_currentStep == 2) {
-      _showToast('Generating design with $_selectedStyle ($_selectedRatio)...');
-      _goToStep(3);
+      if (_isGenerating) return;
+      _startGeneration();
       return;
     }
 
-    _showToast('Design saved to gallery.');
+    if (_currentStep == 3) {
+      _goToStep(4);
+      return;
+    }
+
+    _showToast('Price list saved.');
   }
 
   void _goToStep(int index) {
@@ -148,6 +213,38 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     setState(() {
       _reveal = value.clamp(0.05, 0.95);
     });
+  }
+
+  Future<void> _startGeneration() async {
+    setState(() {
+      _isGenerating = true;
+      _generationProgress = 0.2;
+      _generationStatus = 'Queued (2/10)';
+      _hasResultReady = false;
+    });
+
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+    setState(() {
+      _generationProgress = 0.55;
+      _generationStatus = 'Processing design...';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (!mounted) return;
+    setState(() {
+      _generationProgress = 1.0;
+      _generationStatus = 'Complete';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 350));
+    if (!mounted) return;
+    setState(() {
+      _isGenerating = false;
+      _hasResultReady = true;
+    });
+    _goToStep(3);
+    _showToast('Design ready!');
   }
 
   void _showToast(String message) {
@@ -279,6 +376,12 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                                 _showToast('Regenerating design...'),
                           ),
                         ),
+                        _GlassPanel(
+                          child: _PriceListStep(
+                            textTheme: textTheme,
+                            sections: _priceSections,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -300,16 +403,22 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                               : _currentStep == 1
                               ? 'Next'
                               : _currentStep == 2
-                              ? 'Generate'
-                              : 'Save',
+                              ? (_isGenerating ? 'Generating...' : 'Generate')
+                              : _currentStep == 3
+                              ? 'Price List'
+                              : 'Save List',
                           onTap: _handleNext,
                           enabled: _currentStep == 0
                               ? _hasUploaded
                               : _currentStep == 1
                               ? _selectedStyle != null
                               : _currentStep == 2
-                              ? _selectedStyle != null && _hasUploaded
-                              : true,
+                              ? _selectedStyle != null &&
+                                    _hasUploaded &&
+                                    !_isGenerating
+                              : _currentStep == 3
+                              ? _hasResultReady && !_isGenerating
+                              : !_isGenerating,
                         ),
                       ),
                     ],
@@ -319,6 +428,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
               ),
             ),
           ),
+          if (_isGenerating)
+            _GeneratingOverlay(
+              status: _generationStatus,
+              progress: _generationProgress,
+            ),
         ],
       ),
     );
@@ -750,14 +864,14 @@ class _ReviewStep extends StatelessWidget {
                       border: InputBorder.none,
                       hintText:
                           'Add room details or inspiration notes for the AI...',
-                      hintStyle: TextStyle(color: Colors.white54),
+                      hintStyle: TextStyle(color: Colors.white54, fontSize: 13),
                     ),
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'These notes will be added to the AI prompt for finer control.',
-                  style: TextStyle(color: Colors.white70, fontSize: 11),
+                  style: TextStyle(color: Colors.white70, fontSize: 10),
                 ),
               ],
             ),
@@ -910,6 +1024,14 @@ class _ResultStep extends StatelessWidget {
                               onTap: onFullscreen,
                             ),
                           ),
+                          Positioned(
+                            bottom: 10,
+                            right: 56,
+                            child: _IconPill(
+                              icon: Icons.refresh,
+                              onTap: onRegenerate,
+                            ),
+                          ),
                         ],
                       );
                     },
@@ -940,6 +1062,211 @@ class _ResultStep extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _PriceListStep extends StatelessWidget {
+  const _PriceListStep({required this.textTheme, required this.sections});
+
+  final TextTheme textTheme;
+  final List<_PriceSection> sections;
+
+  @override
+  Widget build(BuildContext context) {
+    final double total = sections
+        .expand((s) => s.items)
+        .fold(0.0, (sum, item) => sum + item.price);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Stack(
+            children: [
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: const AssetImage('assets/images/bg_home.png'),
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.35),
+                        BlendMode.darken,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Total Estimated Cost:',
+          style: textTheme.titleMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '\$${total.toStringAsFixed(0)}',
+          style: textTheme.headlineMedium?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'For your personalized redesign',
+          style: textTheme.bodyMedium?.copyWith(color: Colors.white70),
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: ListView.separated(
+            itemCount: sections.length + 1,
+            separatorBuilder: (_, __) => const SizedBox(height: 14),
+            itemBuilder: (context, index) {
+              if (index == sections.length) {
+                return _PrimaryButton(
+                  label: 'Save List',
+                  onTap: () {},
+                  enabled: true,
+                );
+              }
+              final section = sections[index];
+              return _PriceSectionCard(section: section);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PriceSectionCard extends StatelessWidget {
+  const _PriceSectionCard({required this.section});
+
+  final _PriceSection section;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                section.title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                ),
+              ),
+              const Spacer(),
+              Icon(Icons.keyboard_arrow_down, color: Colors.white70),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Column(
+            children: section.items
+                .map(
+                  (item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: _PriceItemCard(item: item),
+                  ),
+                )
+                .toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PriceItemCard extends StatelessWidget {
+  const _PriceItemCard({required this.item});
+
+  final _PriceItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.45),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: Colors.white.withOpacity(0.08)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.25),
+            blurRadius: 12,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item.brand,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  item.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${item.description}. Est. Price: \$${item.price.toStringAsFixed(0)}',
+                  style: const TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+                const SizedBox(height: 8),
+                _ActionPill(
+                  icon: item.actionLabel == 'Copy Code'
+                      ? Icons.copy
+                      : Icons.shopping_bag_outlined,
+                  label: item.actionLabel,
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              width: 90,
+              height: 90,
+              color: Colors.white,
+              child: Image.network(item.imageUrl, fit: BoxFit.cover),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1038,6 +1365,143 @@ class _ActionPill extends StatelessWidget {
       ),
     );
   }
+}
+
+class _GeneratingOverlay extends StatelessWidget {
+  const _GeneratingOverlay({required this.status, required this.progress});
+
+  final String status;
+  final double progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final percent = (progress * 100).clamp(0, 100).toStringAsFixed(0);
+
+    return Positioned.fill(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          color: Colors.black.withOpacity(0.55),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 28),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.08),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Colors.white.withOpacity(0.12)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  blurRadius: 18,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.4,
+                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      'Generating your design...',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.08),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.12),
+                        ),
+                      ),
+                      child: Text(
+                        status,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '$percent%',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    minHeight: 10,
+                    value: progress.clamp(0, 1),
+                    backgroundColor: Colors.white.withOpacity(0.08),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      InteriorDesignPage._accent,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PriceSection {
+  const _PriceSection({required this.title, required this.items});
+
+  final String title;
+  final List<_PriceItem> items;
+}
+
+class _PriceItem {
+  const _PriceItem({
+    required this.brand,
+    required this.name,
+    required this.description,
+    required this.price,
+    required this.imageUrl,
+    required this.actionLabel,
+  });
+
+  final String brand;
+  final String name;
+  final String description;
+  final double price;
+  final String imageUrl;
+  final String actionLabel;
 }
 
 class _StyleCard extends StatelessWidget {
