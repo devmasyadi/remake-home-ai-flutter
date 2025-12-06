@@ -19,6 +19,13 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   String _selectedRatio = '1:1';
   final TextEditingController _promptController = TextEditingController();
   ImageProvider _previewImage = const AssetImage('assets/images/bg_home.png');
+  final ImageProvider _beforeImage = const NetworkImage(
+    'https://picsum.photos/seed/before/900/1200',
+  );
+  final ImageProvider _afterImage = const NetworkImage(
+    'https://picsum.photos/seed/after/900/1200',
+  );
+  double _reveal = 0.52;
 
   final List<_StyleOption> _styles = const [
     _StyleOption(
@@ -55,19 +62,15 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   }
 
   void _handleNavTap(int index) {
-    if (index == 1 && !_hasUploaded) {
+    if (index >= 1 && !_hasUploaded) {
       _showToast('Upload a room photo first.');
       return;
     }
-    if (index == 2 && !_hasUploaded) {
-      _showToast('Upload a room photo first.');
-      return;
-    }
-    if (index == 2 && _selectedStyle == null) {
+    if (index >= 2 && _selectedStyle == null) {
       _showToast('Select a design style first.');
       return;
     }
-    if (index <= 2) {
+    if (index <= 3) {
       _goToStep(index);
     } else {
       _showToast('This step is coming soon.');
@@ -101,7 +104,13 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       return;
     }
 
-    _showToast('Ready to generate with $_selectedStyle ($_selectedRatio).');
+    if (_currentStep == 2) {
+      _showToast('Generating design with $_selectedStyle ($_selectedRatio)...');
+      _goToStep(3);
+      return;
+    }
+
+    _showToast('Design saved to gallery.');
   }
 
   void _goToStep(int index) {
@@ -132,6 +141,12 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   void _selectRatio(String ratio) {
     setState(() {
       _selectedRatio = ratio;
+    });
+  }
+
+  void _updateReveal(double value) {
+    setState(() {
+      _reveal = value.clamp(0.05, 0.95);
     });
   }
 
@@ -247,6 +262,23 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                             promptController: _promptController,
                           ),
                         ),
+                        _GlassPanel(
+                          child: _ResultStep(
+                            textTheme: textTheme,
+                            beforeImage: _beforeImage,
+                            afterImage: _afterImage,
+                            reveal: _reveal,
+                            onRevealChanged: _updateReveal,
+                            onShareResult: () =>
+                                _showToast('Sharing design...'),
+                            onSave: () =>
+                                _showToast('Design saved to gallery.'),
+                            onFullscreen: () =>
+                                _showToast('Opening fullscreen preview.'),
+                            onRegenerate: () =>
+                                _showToast('Regenerating design...'),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -267,13 +299,17 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                               ? 'Next'
                               : _currentStep == 1
                               ? 'Next'
-                              : 'Generate',
+                              : _currentStep == 2
+                              ? 'Generate'
+                              : 'Save',
                           onTap: _handleNext,
                           enabled: _currentStep == 0
                               ? _hasUploaded
                               : _currentStep == 1
                               ? _selectedStyle != null
-                              : _selectedStyle != null && _hasUploaded,
+                              : _currentStep == 2
+                              ? _selectedStyle != null && _hasUploaded
+                              : true,
                         ),
                       ),
                     ],
@@ -491,7 +527,7 @@ class _ReviewStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const ratios = ['1:1', '4:5', '3:4', '9:16', '16:9'];
+    const ratios = ['1:1', '3:4', '9:16', '16:9'];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -732,6 +768,278 @@ class _ReviewStep extends StatelessWidget {
   }
 }
 
+class _ResultStep extends StatelessWidget {
+  const _ResultStep({
+    required this.textTheme,
+    required this.beforeImage,
+    required this.afterImage,
+    required this.reveal,
+    required this.onRevealChanged,
+    required this.onShareResult,
+    required this.onSave,
+    required this.onFullscreen,
+    required this.onRegenerate,
+  });
+
+  final TextTheme textTheme;
+  final ImageProvider beforeImage;
+  final ImageProvider afterImage;
+  final double reveal;
+  final ValueChanged<double> onRevealChanged;
+  final VoidCallback onShareResult;
+  final VoidCallback onSave;
+  final VoidCallback onFullscreen;
+  final VoidCallback onRegenerate;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'AI Redesign Result',
+          style: textTheme.headlineSmall?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Preview your generated design and refine if needed.',
+          style: textTheme.bodyMedium?.copyWith(
+            color: Colors.white70,
+            height: 1.35,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Expanded(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: afterImage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final width = constraints.maxWidth * reveal;
+                      return Stack(
+                        children: [
+                          Positioned.fill(
+                            child: ClipRect(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                widthFactor: reveal,
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      image: beforeImage,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: width - 1,
+                            top: 0,
+                            bottom: 0,
+                            child: Container(
+                              width: 2,
+                              color: Colors.white.withOpacity(0.8),
+                            ),
+                          ),
+                          Positioned(
+                            left: width - 24,
+                            top: constraints.maxHeight / 2 - 18,
+                            child: GestureDetector(
+                              onPanUpdate: (details) {
+                                final delta =
+                                    details.localPosition.dx /
+                                    constraints.maxWidth;
+                                onRevealChanged(delta);
+                              },
+                              child: Container(
+                                width: 36,
+                                height: 36,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.25),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(
+                                  Icons.swap_horiz,
+                                  size: 18,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            left: 10,
+                            top: 10,
+                            child: _ResultBadge(label: 'Before'),
+                          ),
+                          Positioned(
+                            right: 10,
+                            top: 10,
+                            child: _ResultBadge(label: 'After'),
+                          ),
+                          Positioned(
+                            bottom: 10,
+                            right: 10,
+                            child: _IconPill(
+                              icon: Icons.zoom_out_map,
+                              onTap: onFullscreen,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(
+              child: _ActionPill(
+                icon: Icons.share_outlined,
+                label: 'Share',
+                onTap: onShareResult,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _ActionPill(
+                icon: Icons.download_outlined,
+                label: 'Save Design',
+                onTap: onSave,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _ResultBadge extends StatelessWidget {
+  const _ResultBadge({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.55),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.12)),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w700,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+}
+
+class _IconPill extends StatelessWidget {
+  const _IconPill({required this.icon, required this.onTap});
+
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.14),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Icon(icon, size: 16, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class _ActionPill extends StatelessWidget {
+  const _ActionPill({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        splashColor: Colors.white.withOpacity(0.08),
+        highlightColor: Colors.white.withOpacity(0.05),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: Colors.white.withOpacity(0.12)),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: Colors.white),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _StyleCard extends StatelessWidget {
   const _StyleCard({
     required this.option,
@@ -878,7 +1186,7 @@ class _RatioChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: selected
               ? InteriorDesignPage._accent.withOpacity(0.18)
