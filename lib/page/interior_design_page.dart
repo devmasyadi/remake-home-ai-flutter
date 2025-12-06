@@ -266,14 +266,14 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                           label: _currentStep == 0
                               ? 'Next'
                               : _currentStep == 1
-                                  ? 'Next'
-                                  : 'Generate',
+                              ? 'Next'
+                              : 'Generate',
                           onTap: _handleNext,
                           enabled: _currentStep == 0
                               ? _hasUploaded
                               : _currentStep == 1
-                                  ? _selectedStyle != null
-                                  : _selectedStyle != null && _hasUploaded,
+                              ? _selectedStyle != null
+                              : _selectedStyle != null && _hasUploaded,
                         ),
                       ),
                     ],
@@ -493,229 +493,241 @@ class _ReviewStep extends StatelessWidget {
   Widget build(BuildContext context) {
     const ratios = ['1:1', '4:5', '3:4', '9:16', '16:9'];
 
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Review Design',
-            style: textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Review Design',
+          style: textTheme.headlineSmall?.copyWith(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),
-          const SizedBox(height: 6),
-          Text(
-            'Confirm your selections before generating the design.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: Colors.white70,
-              height: 1.35,
-              fontSize: 11,
-            ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Confirm your selections before generating the design.',
+          style: textTheme.bodyMedium?.copyWith(
+            color: Colors.white70,
+            height: 1.35,
+            fontSize: 11,
           ),
-          const SizedBox(height: 14),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(18),
-            child: Stack(
+        ),
+        const SizedBox(height: 14),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AspectRatio(
-                  aspectRatio: 1.6,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: previewImage,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withOpacity(0.2),
-                          Colors.black.withOpacity(0.45),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.15),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const [
-                        Icon(
-                          Icons.photo_camera_back_outlined,
-                          color: Colors.white,
-                          size: 14,
-                        ),
-                        SizedBox(width: 6),
-                        Text(
-                          'Uploaded Room',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Stack(
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1.6,
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: previewImage,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 14),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.06),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: InteriorDesignPage._accent.withOpacity(0.16),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: InteriorDesignPage._accent.withOpacity(0.6),
-                    ),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.style_outlined,
-                        size: 16,
-                        color: InteriorDesignPage._accent,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        selectedStyle ?? 'No style selected',
-                        style: TextStyle(
-                          color: selectedStyle != null
-                              ? Colors.white
-                              : Colors.white70,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.black.withOpacity(0.2),
+                                Colors.black.withOpacity(0.45),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 12,
+                        left: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: Colors.white.withOpacity(0.15),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const [
+                              Icon(
+                                Icons.photo_camera_back_outlined,
+                                color: Colors.white,
+                                size: 14,
+                              ),
+                              SizedBox(width: 6),
+                              Text(
+                                'Uploaded Room',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(height: 14),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Colors.white.withOpacity(0.06),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.white.withOpacity(0.08)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(
-                        Icons.aspect_ratio,
-                        size: 16,
-                        color: Colors.white70,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: InteriorDesignPage._accent.withOpacity(0.16),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: InteriorDesignPage._accent.withOpacity(0.6),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.style_outlined,
+                              size: 16,
+                              color: InteriorDesignPage._accent,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              selectedStyle ?? 'No style selected',
+                              style: TextStyle(
+                                color: selectedStyle != null
+                                    ? Colors.white
+                                    : Colors.white70,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        selectedRatio,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withOpacity(0.08),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.aspect_ratio,
+                              size: 16,
+                              color: Colors.white70,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              selectedRatio,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
+                const SizedBox(height: 14),
+                Text(
+                  'Image Ratio',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: ratios
+                      .map(
+                        (ratio) => _RatioChip(
+                          label: ratio,
+                          selected: ratio == selectedRatio,
+                          onTap: () => onRatioSelect(ratio),
+                        ),
+                      )
+                      .toList(),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Notes (Optional)',
+                  style: textTheme.titleMedium?.copyWith(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: TextField(
+                    controller: promptController,
+                    maxLines: 4,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText:
+                          'Add room details or inspiration notes for the AI...',
+                      hintStyle: TextStyle(color: Colors.white54),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'These notes will be added to the AI prompt for finer control.',
+                  style: TextStyle(color: Colors.white70, fontSize: 11),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 14),
-          Text(
-            'Image Ratio',
-            style: textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: ratios
-                .map(
-                  (ratio) => _RatioChip(
-                    label: ratio,
-                    selected: ratio == selectedRatio,
-                    onTap: () => onRatioSelect(ratio),
-                  ),
-                )
-                .toList(),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Notes / Prompt',
-            style: textTheme.titleMedium?.copyWith(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontSize: 15,
-            ),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.05),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white.withOpacity(0.08)),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: TextField(
-              controller: promptController,
-              maxLines: 4,
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                hintText:
-                    'Add room details or inspiration notes for the AI...',
-                hintStyle: TextStyle(color: Colors.white54),
-              ),
-            ),
-          ),
-          const SizedBox(height: 8),
-          const Text(
-            'These notes will be added to the AI prompt for finer control.',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 11,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
