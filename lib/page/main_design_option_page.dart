@@ -1,6 +1,7 @@
 import 'dart:ui';
 
-import 'package:ai_home_design/page/interior_design_page.dart';
+import 'package:ai_home_design/page/interior_design/interior_design_page.dart';
+import 'package:ai_home_design/widgets/app_buttons.dart';
 import 'package:flutter/material.dart';
 
 class MainDesignOptionPage extends StatefulWidget {
@@ -118,9 +119,9 @@ class _MainDesignOptionPageState extends State<MainDesignOptionPage> {
                       const Spacer(),
                       const _ProfileBadge(initial: 'A'),
                       const SizedBox(width: 10),
-                      const _RoundIconButton(icon: Icons.add),
+                      const RoundIconButton(icon: Icons.add),
                       const SizedBox(width: 10),
-                      const _RoundIconButton(icon: Icons.more_horiz),
+                      const RoundIconButton(icon: Icons.more_horiz),
                     ],
                   ),
                   const SizedBox(height: 18),
@@ -265,41 +266,6 @@ class _IconBadge extends StatelessWidget {
         border: Border.all(color: Colors.white.withOpacity(0.1)),
       ),
       child: Icon(icon, color: Colors.white),
-    );
-  }
-}
-
-class _RoundIconButton extends StatelessWidget {
-  const _RoundIconButton({required this.icon});
-
-  final IconData icon;
-
-  @override
-  Widget build(BuildContext context) {
-    final radius = BorderRadius.circular(16);
-    return ClipRRect(
-      borderRadius: radius,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            borderRadius: radius,
-            splashColor: Colors.white.withOpacity(0.12),
-            highlightColor: Colors.white.withOpacity(0.08),
-            onTap: () {},
-            child: Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.12),
-                borderRadius: radius,
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
-              ),
-              child: Icon(icon, size: 20, color: Colors.white),
-            ),
-          ),
-        ),
-      ),
     );
   }
 }
