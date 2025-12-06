@@ -1,55 +1,73 @@
 import 'dart:ui';
 
-import 'package:ai_home_design/page/upload_room_photo_page.dart';
+import 'package:ai_home_design/page/interior_design_page.dart';
 import 'package:flutter/material.dart';
 
-class MainDesignOptionPage extends StatelessWidget {
+class MainDesignOptionPage extends StatefulWidget {
   const MainDesignOptionPage({super.key});
 
-  List<ActionOption> get _actions => [
-    ActionOption(
-      icon: Icons.home_outlined,
-      title: 'Interior Design',
-      subtitle: 'Redesign your living space',
-      color: Color(0xFFE4C08E),
-      onTap: (BuildContext context) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => UploadRoomPhotoPage()),
-        );
-      },
-    ),
-    ActionOption(
-      icon: Icons.apartment,
-      title: 'Exterior Design',
-      subtitle: "Transform your home's facade",
-      color: Color(0xFFB8C7D9),
-    ),
-    ActionOption(
-      icon: Icons.cleaning_services_outlined,
-      title: 'Cleanup',
-      subtitle: 'Delete selected objects',
-      color: Color(0xFFEAB485),
-    ),
-    ActionOption(
-      icon: Icons.autorenew,
-      title: 'Replace Design',
-      subtitle: 'Swap elements in your room',
-      color: Color(0xFFA6D7DB),
-    ),
-    ActionOption(
-      icon: Icons.image_outlined,
-      title: 'Design by Reference',
-      subtitle: 'Use an image for inspiration',
-      color: Color(0xFFD7D0C6),
-    ),
-    ActionOption(
-      icon: Icons.edit_outlined,
-      title: 'Design by Prompt',
-      subtitle: 'Describe your ideal design',
-      color: Color(0xFFCEB2C6),
-    ),
-  ];
+  @override
+  State<MainDesignOptionPage> createState() => _MainDesignOptionPageState();
+}
+
+class _MainDesignOptionPageState extends State<MainDesignOptionPage> {
+  late final List<ActionOption> _actions;
+  int _selectedTab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _actions = [
+      ActionOption(
+        icon: Icons.home_outlined,
+        title: 'Interior Design',
+        subtitle: 'Redesign your living space',
+        color: const Color(0xFFE4C08E),
+        onTap: (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const InteriorDesignPage()),
+          );
+        },
+      ),
+      const ActionOption(
+        icon: Icons.apartment,
+        title: 'Exterior Design',
+        subtitle: "Transform your home's facade",
+        color: Color(0xFFB8C7D9),
+      ),
+      const ActionOption(
+        icon: Icons.cleaning_services_outlined,
+        title: 'Cleanup',
+        subtitle: 'Delete selected objects',
+        color: Color(0xFFEAB485),
+      ),
+      const ActionOption(
+        icon: Icons.autorenew,
+        title: 'Replace Design',
+        subtitle: 'Swap elements in your room',
+        color: Color(0xFFA6D7DB),
+      ),
+      const ActionOption(
+        icon: Icons.image_outlined,
+        title: 'Design by Reference',
+        subtitle: 'Use an image for inspiration',
+        color: Color(0xFFD7D0C6),
+      ),
+      const ActionOption(
+        icon: Icons.edit_outlined,
+        title: 'Design by Prompt',
+        subtitle: 'Describe your ideal design',
+        color: Color(0xFFCEB2C6),
+      ),
+    ];
+  }
+
+  void _handleNavTap(int index) {
+    setState(() {
+      _selectedTab = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +156,10 @@ class MainDesignOptionPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 12),
-                  const _BottomNavBar(selectedIndex: 0),
+                  _BottomNavBar(
+                    selectedIndex: _selectedTab,
+                    onItemSelected: _handleNavTap,
+                  ),
                 ],
               ),
             ),
@@ -313,9 +334,13 @@ class _ProfileBadge extends StatelessWidget {
 }
 
 class _BottomNavBar extends StatelessWidget {
-  const _BottomNavBar({required this.selectedIndex});
+  const _BottomNavBar({
+    required this.selectedIndex,
+    required this.onItemSelected,
+  });
 
   final int selectedIndex;
+  final ValueChanged<int> onItemSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -352,28 +377,39 @@ class _BottomNavBar extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     splashColor: Colors.white.withOpacity(0.08),
                     highlightColor: Colors.white.withOpacity(0.05),
-                    onTap: () {},
-                    child: Padding(
+                    onTap: () => onItemSelected(index),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 220),
+                      curve: Curves.easeOutCubic,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
-                            item.icon,
-                            size: 24,
-                            color: isSelected ? activeColor : Colors.white70,
+                          TweenAnimationBuilder<Color?>(
+                            tween: ColorTween(
+                              begin: Colors.white70,
+                              end: isSelected ? activeColor : Colors.white70,
+                            ),
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
+                            builder: (context, color, _) {
+                              return Icon(item.icon, size: 24, color: color);
+                            },
                           ),
                           const SizedBox(height: 6),
-                          Text(
-                            item.label,
+                          AnimatedDefaultTextStyle(
+                            duration: const Duration(milliseconds: 220),
+                            curve: Curves.easeOutCubic,
                             style: TextStyle(
                               fontSize: 12,
                               color: isSelected ? activeColor : Colors.white70,
                               fontWeight: isSelected
-                                  ? FontWeight.w600
+                                  ? FontWeight.w700
                                   : FontWeight.w500,
                             ),
+                            child: Text(item.label),
                           ),
+                          const SizedBox(height: 4),
                         ],
                       ),
                     ),
