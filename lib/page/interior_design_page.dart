@@ -16,6 +16,8 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   int _currentStep = 0;
   bool _hasUploaded = false;
   String? _selectedStyle;
+  String _selectedRatio = '1:1';
+  final TextEditingController _promptController = TextEditingController();
   ImageProvider _previewImage = const AssetImage('assets/images/bg_home.png');
 
   final List<_StyleOption> _styles = const [
@@ -48,6 +50,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   @override
   void dispose() {
     _pageController.dispose();
+    _promptController.dispose();
     super.dispose();
   }
 
@@ -56,7 +59,15 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       _showToast('Upload a room photo first.');
       return;
     }
-    if (index <= 1) {
+    if (index == 2 && !_hasUploaded) {
+      _showToast('Upload a room photo first.');
+      return;
+    }
+    if (index == 2 && _selectedStyle == null) {
+      _showToast('Select a design style first.');
+      return;
+    }
+    if (index <= 2) {
       _goToStep(index);
     } else {
       _showToast('This step is coming soon.');
@@ -81,11 +92,16 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       return;
     }
 
-    if (_selectedStyle == null) {
-      _showToast('Choose a style to continue.');
+    if (_currentStep == 1) {
+      if (_selectedStyle == null) {
+        _showToast('Choose a style to continue.');
+        return;
+      }
+      _goToStep(2);
       return;
     }
-    _showToast('Style "$_selectedStyle" selected. Ready to generate!');
+
+    _showToast('Ready to generate with $_selectedStyle ($_selectedRatio).');
   }
 
   void _goToStep(int index) {
@@ -110,6 +126,12 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   void _selectStyle(_StyleOption option) {
     setState(() {
       _selectedStyle = option.title;
+    });
+  }
+
+  void _selectRatio(String ratio) {
+    setState(() {
+      _selectedRatio = ratio;
     });
   }
 
@@ -215,6 +237,16 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                             onSelect: _selectStyle,
                           ),
                         ),
+                        _GlassPanel(
+                          child: _ReviewStep(
+                            textTheme: textTheme,
+                            previewImage: _previewImage,
+                            selectedStyle: _selectedStyle,
+                            selectedRatio: _selectedRatio,
+                            onRatioSelect: _selectRatio,
+                            promptController: _promptController,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -231,11 +263,17 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: _PrimaryButton(
-                          label: _currentStep == 0 ? 'Next' : 'Generate',
+                          label: _currentStep == 0
+                              ? 'Next'
+                              : _currentStep == 1
+                                  ? 'Next'
+                                  : 'Generate',
                           onTap: _handleNext,
                           enabled: _currentStep == 0
                               ? _hasUploaded
-                              : _selectedStyle != null,
+                              : _currentStep == 1
+                                  ? _selectedStyle != null
+                                  : _selectedStyle != null && _hasUploaded,
                         ),
                       ),
                     ],
@@ -434,6 +472,254 @@ class _StyleStep extends StatelessWidget {
   }
 }
 
+class _ReviewStep extends StatelessWidget {
+  const _ReviewStep({
+    required this.textTheme,
+    required this.previewImage,
+    required this.selectedStyle,
+    required this.selectedRatio,
+    required this.onRatioSelect,
+    required this.promptController,
+  });
+
+  final TextTheme textTheme;
+  final ImageProvider previewImage;
+  final String? selectedStyle;
+  final String selectedRatio;
+  final ValueChanged<String> onRatioSelect;
+  final TextEditingController promptController;
+
+  @override
+  Widget build(BuildContext context) {
+    const ratios = ['1:1', '4:5', '3:4', '9:16', '16:9'];
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Review Design',
+            style: textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Confirm your selections before generating the design.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: Colors.white70,
+              height: 1.35,
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: Stack(
+              children: [
+                AspectRatio(
+                  aspectRatio: 1.6,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: previewImage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.2),
+                          Colors.black.withOpacity(0.45),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.15),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Icon(
+                          Icons.photo_camera_back_outlined,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        SizedBox(width: 6),
+                        Text(
+                          'Uploaded Room',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.06),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: InteriorDesignPage._accent.withOpacity(0.16),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: InteriorDesignPage._accent.withOpacity(0.6),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.style_outlined,
+                        size: 16,
+                        color: InteriorDesignPage._accent,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        selectedStyle ?? 'No style selected',
+                        style: TextStyle(
+                          color: selectedStyle != null
+                              ? Colors.white
+                              : Colors.white70,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.aspect_ratio,
+                        size: 16,
+                        color: Colors.white70,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        selectedRatio,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Image Ratio',
+            style: textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: ratios
+                .map(
+                  (ratio) => _RatioChip(
+                    label: ratio,
+                    selected: ratio == selectedRatio,
+                    onTap: () => onRatioSelect(ratio),
+                  ),
+                )
+                .toList(),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Notes / Prompt',
+            style: textTheme.titleMedium?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white.withOpacity(0.08)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: TextField(
+              controller: promptController,
+              maxLines: 4,
+              style: const TextStyle(color: Colors.white),
+              decoration: const InputDecoration(
+                border: InputBorder.none,
+                hintText:
+                    'Add room details or inspiration notes for the AI...',
+                hintStyle: TextStyle(color: Colors.white54),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'These notes will be added to the AI prompt for finer control.',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _StyleCard extends StatelessWidget {
   const _StyleCard({
     required this.option,
@@ -558,6 +844,68 @@ class _StyleCard extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RatioChip extends StatelessWidget {
+  const _RatioChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: selected
+              ? InteriorDesignPage._accent.withOpacity(0.18)
+              : Colors.white.withOpacity(0.06),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected
+                ? InteriorDesignPage._accent.withOpacity(0.8)
+                : Colors.white.withOpacity(0.08),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              blurRadius: 8,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.aspect_ratio,
+              size: 14,
+              color: selected
+                  ? InteriorDesignPage._accent
+                  : Colors.white.withOpacity(0.8),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: selected
+                    ? InteriorDesignPage._accent
+                    : Colors.white.withOpacity(0.9),
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
         ),
       ),
     );
