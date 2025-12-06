@@ -60,8 +60,8 @@ class ReviewStep extends StatelessWidget {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                Colors.black.withOpacity(0.2),
-                                Colors.black.withOpacity(0.45),
+                                Colors.black.withValues(alpha: 0.2),
+                                Colors.black.withValues(alpha: 0.45),
                               ],
                             ),
                           ),
@@ -76,10 +76,10 @@ class ReviewStep extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                            color: Colors.black.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
-                              color: Colors.white.withOpacity(0.15),
+                              color: Colors.white.withValues(alpha: 0.15),
                             ),
                           ),
                           child: Row(
@@ -111,9 +111,11 @@ class ReviewStep extends StatelessWidget {
                   width: double.infinity,
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
+                    color: Colors.white.withValues(alpha: 0.06),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -123,10 +125,10 @@ class ReviewStep extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.accent.withOpacity(0.16),
+                          color: AppColors.accent.withValues(alpha: 0.16),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: AppColors.accent.withOpacity(0.6),
+                            color: AppColors.accent.withValues(alpha: 0.6),
                           ),
                         ),
                         child: Row(
@@ -157,10 +159,10 @@ class ReviewStep extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.05),
+                          color: Colors.white.withValues(alpha: 0.05),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.08),
+                            color: Colors.white.withValues(alpha: 0.08),
                           ),
                         ),
                         child: Row(
@@ -220,9 +222,11 @@ class ReviewStep extends StatelessWidget {
                 const SizedBox(height: 10),
                 Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.05),
+                    color: Colors.white.withValues(alpha: 0.05),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.08),
+                    ),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   child: TextField(
@@ -271,17 +275,17 @@ class RatioChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: selected
-              ? AppColors.accent.withOpacity(0.18)
-              : Colors.white.withOpacity(0.06),
+              ? AppColors.accent.withValues(alpha: 0.18)
+              : Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: selected
-                ? AppColors.accent.withOpacity(0.8)
-                : Colors.white.withOpacity(0.08),
+                ? AppColors.accent.withValues(alpha: 0.8)
+                : Colors.white.withValues(alpha: 0.08),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 8,
               offset: const Offset(0, 6),
             ),
@@ -295,7 +299,7 @@ class RatioChip extends StatelessWidget {
               size: 14,
               color: selected
                   ? AppColors.accent
-                  : Colors.white.withOpacity(0.8),
+                  : Colors.white.withValues(alpha: 0.8),
             ),
             const SizedBox(width: 8),
             Text(
@@ -303,7 +307,7 @@ class RatioChip extends StatelessWidget {
               style: TextStyle(
                 color: selected
                     ? AppColors.accent
-                    : Colors.white.withOpacity(0.9),
+                    : Colors.white.withValues(alpha: 0.9),
                 fontWeight: FontWeight.w700,
               ),
             ),

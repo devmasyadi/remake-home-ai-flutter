@@ -22,14 +22,14 @@ class GlassPanel extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                Colors.white.withOpacity(0.08),
-                Colors.white.withOpacity(0.04),
+                Colors.white.withValues(alpha: 0.08),
+                Colors.white.withValues(alpha: 0.04),
               ],
             ),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.28),
+                color: Colors.black.withValues(alpha: 0.28),
                 blurRadius: 18,
                 offset: const Offset(0, 12),
               ),

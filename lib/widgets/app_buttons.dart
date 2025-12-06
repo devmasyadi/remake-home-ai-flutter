@@ -21,7 +21,7 @@ class PrimaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color background = enabled
         ? color ?? AppColors.accent
-        : Colors.white.withOpacity(0.12);
+        : Colors.white.withValues(alpha: 0.12);
 
     return Material(
       color: background,
@@ -30,7 +30,7 @@ class PrimaryButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(28),
         onTap: enabled ? onTap : null,
         splashColor: enabled
-            ? Colors.white.withOpacity(0.1)
+            ? Colors.white.withValues(alpha: 0.1)
             : Colors.transparent,
         child: Container(
           width: double.infinity,
@@ -39,7 +39,9 @@ class PrimaryButton extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
-              color: enabled ? Colors.white : Colors.white.withOpacity(0.6),
+              color: enabled
+                  ? Colors.white
+                  : Colors.white.withValues(alpha: 0.6),
               fontWeight: FontWeight.w700,
               fontSize: 16,
             ),
@@ -60,20 +62,20 @@ class SecondaryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final BorderRadius radius = BorderRadius.circular(28);
     return Material(
-      color: Colors.white.withOpacity(0.08),
+      color: Colors.white.withValues(alpha: 0.08),
       borderRadius: radius,
       child: InkWell(
         borderRadius: radius,
         onTap: onTap ?? () {},
-        splashColor: Colors.white.withOpacity(0.08),
-        highlightColor: Colors.white.withOpacity(0.05),
+        splashColor: Colors.white.withValues(alpha: 0.08),
+        highlightColor: Colors.white.withValues(alpha: 0.05),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 10),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             borderRadius: radius,
-            border: Border.all(color: Colors.white.withOpacity(0.15)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
           ),
           child: Text(
             label,
@@ -104,13 +106,13 @@ class PillButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white.withOpacity(0.16),
+      color: Colors.white.withValues(alpha: 0.16),
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
         onTap: onTap,
-        splashColor: Colors.white.withOpacity(0.12),
-        highlightColor: Colors.white.withOpacity(0.08),
+        splashColor: Colors.white.withValues(alpha: 0.12),
+        highlightColor: Colors.white.withValues(alpha: 0.08),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           child: Row(
@@ -148,18 +150,18 @@ class ActionPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white.withOpacity(0.08),
+      color: Colors.white.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: onTap,
-        splashColor: Colors.white.withOpacity(0.08),
-        highlightColor: Colors.white.withOpacity(0.05),
+        splashColor: Colors.white.withValues(alpha: 0.08),
+        highlightColor: Colors.white.withValues(alpha: 0.05),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -190,7 +192,7 @@ class IconPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white.withOpacity(0.14),
+      color: Colors.white.withValues(alpha: 0.14),
       borderRadius: BorderRadius.circular(14),
       child: InkWell(
         onTap: onTap,
@@ -221,15 +223,15 @@ class RoundIconButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             borderRadius: radius,
-            splashColor: Colors.white.withOpacity(0.12),
-            highlightColor: Colors.white.withOpacity(0.08),
+            splashColor: Colors.white.withValues(alpha: 0.12),
+            highlightColor: Colors.white.withValues(alpha: 0.08),
             onTap: onTap,
             child: Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.12),
+                color: Colors.white.withValues(alpha: 0.12),
                 borderRadius: radius,
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
               ),
               child: Icon(icon, size: 20, color: Colors.white),
             ),

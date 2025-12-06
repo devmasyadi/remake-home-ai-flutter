@@ -292,7 +292,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       SnackBar(
         content: Text(message),
         behavior: SnackBarBehavior.floating,
-        backgroundColor: Colors.black.withOpacity(0.85),
+        backgroundColor: Colors.black.withValues(alpha: 0.85),
       ),
     );
   }

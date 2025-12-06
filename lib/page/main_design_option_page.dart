@@ -192,23 +192,23 @@ class _ActionTile extends StatelessWidget {
               option.onTap?.call(context);
             },
             borderRadius: cardRadius,
-            splashColor: Colors.white.withOpacity(0.08),
-            highlightColor: Colors.white.withOpacity(0.05),
+            splashColor: Colors.white.withValues(alpha: 0.08),
+            highlightColor: Colors.white.withValues(alpha: 0.05),
             child: Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.white.withOpacity(0.12),
-                    Colors.white.withOpacity(0.05),
+                    Colors.white.withValues(alpha: 0.12),
+                    Colors.white.withValues(alpha: 0.05),
                   ],
                 ),
                 borderRadius: cardRadius,
-                border: Border.all(color: Colors.white.withOpacity(0.08)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
+                    color: Colors.black.withValues(alpha: 0.3),
                     blurRadius: 14,
                     offset: const Offset(0, 8),
                   ),
@@ -259,11 +259,11 @@ class _IconBadge extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: LinearGradient(
-          colors: [color.withOpacity(0.6), color.withOpacity(0.2)],
+          colors: [color.withValues(alpha: 0.6), color.withValues(alpha: 0.2)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Icon(icon, color: Colors.white),
     );
@@ -280,8 +280,8 @@ class _ProfileBadge extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        border: Border.all(color: Colors.white.withOpacity(0.16)),
-        color: Colors.white.withOpacity(0.08),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.16)),
+        color: Colors.white.withValues(alpha: 0.08),
       ),
       padding: const EdgeInsets.all(4),
       child: CircleAvatar(
@@ -325,9 +325,9 @@ class _BottomNavBar extends StatelessWidget {
           height: 76,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -341,8 +341,8 @@ class _BottomNavBar extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     borderRadius: BorderRadius.circular(18),
-                    splashColor: Colors.white.withOpacity(0.08),
-                    highlightColor: Colors.white.withOpacity(0.05),
+                    splashColor: Colors.white.withValues(alpha: 0.08),
+                    highlightColor: Colors.white.withValues(alpha: 0.05),
                     onTap: () => onItemSelected(index),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 220),

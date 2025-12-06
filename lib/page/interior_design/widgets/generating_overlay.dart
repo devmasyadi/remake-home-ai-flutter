@@ -21,19 +21,19 @@ class GeneratingOverlay extends StatelessWidget {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
         child: Container(
-          color: Colors.black.withOpacity(0.55),
+          color: Colors.black.withValues(alpha: 0.55),
           alignment: Alignment.center,
           padding: const EdgeInsets.symmetric(horizontal: 28),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.08),
+              color: Colors.white.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Colors.white.withOpacity(0.12)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
+                  color: Colors.black.withValues(alpha: 0.3),
                   blurRadius: 18,
                   offset: const Offset(0, 10),
                 ),
@@ -73,10 +73,10 @@ class GeneratingOverlay extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: Colors.white.withOpacity(0.12),
+                          color: Colors.white.withValues(alpha: 0.12),
                         ),
                       ),
                       child: Text(
@@ -104,7 +104,7 @@ class GeneratingOverlay extends StatelessWidget {
                   child: LinearProgressIndicator(
                     minHeight: 10,
                     value: progress.clamp(0, 1),
-                    backgroundColor: Colors.white.withOpacity(0.08),
+                    backgroundColor: Colors.white.withValues(alpha: 0.08),
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       AppColors.accent,
                     ),

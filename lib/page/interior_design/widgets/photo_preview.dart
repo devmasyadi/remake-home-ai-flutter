@@ -37,8 +37,8 @@ class PhotoPreview extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withOpacity(0.2),
-                    Colors.black.withOpacity(0.45),
+                    Colors.black.withValues(alpha: 0.2),
+                    Colors.black.withValues(alpha: 0.45),
                   ],
                 ),
               ),
@@ -50,12 +50,12 @@ class PhotoPreview extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.5),
+                color: Colors.black.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
                   color: hasUpload
-                      ? AppColors.accent.withOpacity(0.7)
-                      : Colors.white.withOpacity(0.18),
+                      ? AppColors.accent.withValues(alpha: 0.7)
+                      : Colors.white.withValues(alpha: 0.18),
                 ),
               ),
               child: Row(
@@ -122,9 +122,9 @@ class TipItem extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
             shape: BoxShape.circle,
-            border: Border.all(color: Colors.white.withOpacity(0.1)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
           ),
           child: Icon(icon, size: 14, color: Colors.white),
         ),

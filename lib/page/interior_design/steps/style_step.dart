@@ -76,14 +76,14 @@ class StyleCard extends StatelessWidget {
         child: InkWell(
           borderRadius: radius,
           onTap: onTap,
-          splashColor: Colors.white.withOpacity(0.08),
-          highlightColor: Colors.white.withOpacity(0.05),
+          splashColor: Colors.white.withValues(alpha: 0.08),
+          highlightColor: Colors.white.withValues(alpha: 0.05),
           child: Ink(
             decoration: BoxDecoration(
               borderRadius: radius,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.28),
+                  color: Colors.black.withValues(alpha: 0.28),
                   blurRadius: 12,
                   offset: const Offset(0, 10),
                 ),
@@ -98,7 +98,7 @@ class StyleCard extends StatelessWidget {
                         image: NetworkImage(option.imageUrl),
                         fit: BoxFit.cover,
                         colorFilter: ColorFilter.mode(
-                          Colors.black.withOpacity(0.18),
+                          Colors.black.withValues(alpha: 0.18),
                           BlendMode.darken,
                         ),
                       ),
@@ -112,8 +112,8 @@ class StyleCard extends StatelessWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.08),
-                          Colors.black.withOpacity(0.38),
+                          Colors.black.withValues(alpha: 0.08),
+                          Colors.black.withValues(alpha: 0.38),
                         ],
                       ),
                     ),
@@ -128,12 +128,12 @@ class StyleCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.45),
+                        color: Colors.black.withValues(alpha: 0.45),
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: selected
                               ? AppColors.accent
-                              : Colors.white.withOpacity(0.2),
+                              : Colors.white.withValues(alpha: 0.2),
                           width: 1.4,
                         ),
                       ),

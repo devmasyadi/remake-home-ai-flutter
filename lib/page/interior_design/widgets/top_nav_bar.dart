@@ -30,9 +30,9 @@ class TopNavBar extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
           decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.32),
+            color: Colors.black.withValues(alpha: 0.32),
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: Colors.white.withOpacity(0.08)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -48,8 +48,8 @@ class TopNavBar extends StatelessWidget {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(22),
                       onTap: () => onItemSelected(index),
-                      splashColor: Colors.white.withOpacity(0.06),
-                      highlightColor: Colors.white.withOpacity(0.04),
+                      splashColor: Colors.white.withValues(alpha: 0.06),
+                      highlightColor: Colors.white.withValues(alpha: 0.04),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           vertical: 10,
@@ -57,12 +57,14 @@ class TopNavBar extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? AppColors.accent.withOpacity(0.2)
+                              ? AppColors.accent.withValues(alpha: 0.2)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(22),
                           border: isSelected
                               ? Border.all(
-                                  color: AppColors.accent.withOpacity(0.6),
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.6,
+                                  ),
                                 )
                               : null,
                         ),
