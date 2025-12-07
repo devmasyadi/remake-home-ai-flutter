@@ -1,4 +1,4 @@
-import 'package:ai_home_design/page/interior_design/widgets/step_header.dart';
+import 'package:ai_home_design/widgets/step_header.dart';
 import 'package:ai_home_design/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 

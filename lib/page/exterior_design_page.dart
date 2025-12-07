@@ -1,17 +1,18 @@
-import 'package:ai_home_design/page/interior_design/models/design_models.dart';
-import 'package:ai_home_design/page/interior_design/steps/price_list_step.dart';
-import 'package:ai_home_design/page/interior_design/steps/result_step.dart';
-import 'package:ai_home_design/page/interior_design/steps/review_step.dart';
-import 'package:ai_home_design/page/interior_design/steps/style_step.dart';
-import 'package:ai_home_design/page/interior_design/steps/upload_step.dart';
-import 'package:ai_home_design/page/interior_design/widgets/generating_overlay.dart';
-import 'package:ai_home_design/page/interior_design/widgets/top_nav_bar.dart';
+import 'package:ai_home_design/models/design_models.dart';
+import 'package:ai_home_design/widgets/steps/price_list_step.dart';
+import 'package:ai_home_design/widgets/steps/result_step.dart';
+import 'package:ai_home_design/widgets/steps/review_step.dart';
+import 'package:ai_home_design/widgets/steps/style_step.dart';
+import 'package:ai_home_design/widgets/steps/upload_step.dart';
+import 'package:ai_home_design/widgets/generating_overlay.dart';
+import 'package:ai_home_design/widgets/top_nav_bar.dart';
 import 'package:ai_home_design/widgets/app_buttons.dart';
+import 'package:ai_home_design/widgets/full_screen_before_after.dart';
 import 'package:ai_home_design/widgets/glass_panel.dart';
 import 'package:flutter/material.dart';
 
-class InteriorDesignPage extends StatefulWidget {
-  const InteriorDesignPage({super.key});
+class ExteriorDesignPage extends StatefulWidget {
+  const ExteriorDesignPage({super.key});
 
   static const String backgroundImage = 'assets/images/bg_home.png';
   static const LinearGradient backgroundGradient = LinearGradient(
@@ -22,50 +23,71 @@ class InteriorDesignPage extends StatefulWidget {
   );
 
   @override
-  State<InteriorDesignPage> createState() => _InteriorDesignPageState();
+  State<ExteriorDesignPage> createState() => _ExteriorDesignPageState();
 }
 
-class _InteriorDesignPageState extends State<InteriorDesignPage> {
+class _ExteriorDesignPageState extends State<ExteriorDesignPage> {
   final PageController _pageController = PageController();
   final TextEditingController _promptController = TextEditingController();
 
   int _currentStep = 0;
   bool _hasUploaded = false;
   String? _selectedStyle;
-  String _selectedRatio = '1:1';
-  ImageProvider _previewImage = const AssetImage(
-    InteriorDesignPage.backgroundImage,
+  String _selectedRatio = '16:9';
+  ImageProvider _previewImage = const NetworkImage(
+    'https://picsum.photos/seed/exterior-preview/1200/900',
   );
   final ImageProvider _beforeImage = const NetworkImage(
-    'https://picsum.photos/seed/before/900/1200',
+    'https://picsum.photos/seed/exterior-before/1200/900',
   );
   final ImageProvider _afterImage = const NetworkImage(
-    'https://picsum.photos/seed/after/900/1200',
+    'https://picsum.photos/seed/exterior-after/1200/900',
   );
-  double _reveal = 0.52;
+  double _reveal = 0.48;
   bool _isGenerating = false;
-  double _generationProgress = 0.2;
-  String _generationStatus = 'Queued (2/10)';
+  double _generationProgress = 0.18;
+  String _generationStatus = 'Queued (1/8)';
   bool _hasResultReady = false;
 
   final List<PriceSection> _priceSections = const [
     PriceSection(
-      title: 'Furniture',
+      title: 'Landscaping & Outdoor',
       items: [
         PriceItem(
-          brand: 'IKEA',
-          name: 'Ektorp Sofa',
-          description: '3-seat, beige',
-          price: 799,
-          imageUrl: 'https://picsum.photos/seed/sofa/300/200',
+          brand: 'Home Depot',
+          name: 'Evergreen Shrub Set',
+          description: '6-pack landscaping shrubs',
+          price: 320,
+          imageUrl: 'https://picsum.photos/seed/shrub/300/200',
           actionLabel: 'View Product',
         ),
         PriceItem(
-          brand: 'Wayfair',
-          name: 'Walnut Coffee Table',
-          description: 'Solid wood',
-          price: 350,
-          imageUrl: 'https://picsum.photos/seed/table/300/200',
+          brand: 'Trex',
+          name: 'Composite Decking',
+          description: '200 sq ft bundle',
+          price: 1250,
+          imageUrl: 'https://picsum.photos/seed/deck/300/200',
+          actionLabel: 'View Product',
+        ),
+      ],
+    ),
+    PriceSection(
+      title: 'Facade & Paint',
+      items: [
+        PriceItem(
+          brand: 'Behr',
+          name: 'Exterior Paint - Dove',
+          description: '5 gallon',
+          price: 240,
+          imageUrl: 'https://picsum.photos/seed/paint-exterior/300/200',
+          actionLabel: 'Copy Code',
+        ),
+        PriceItem(
+          brand: 'James Hardie',
+          name: 'Fiber Cement Panels',
+          description: 'Modern vertical siding',
+          price: 1850,
+          imageUrl: 'https://picsum.photos/seed/siding/300/200',
           actionLabel: 'View Product',
         ),
       ],
@@ -75,24 +97,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       items: [
         PriceItem(
           brand: 'Philips Hue',
-          name: 'Smart Floor Lamp',
-          description: 'Warm white',
-          price: 220,
-          imageUrl: 'https://picsum.photos/seed/lamp/300/200',
+          name: 'Outdoor Wall Lights',
+          description: '2-pack, warm white',
+          price: 320,
+          imageUrl: 'https://picsum.photos/seed/outdoor-light/300/200',
           actionLabel: 'View Product',
-        ),
-      ],
-    ),
-    PriceSection(
-      title: 'Paint',
-      items: [
-        PriceItem(
-          brand: 'Benjamin Moore',
-          name: 'Chantilly Lace',
-          description: 'OC-65',
-          price: 65,
-          imageUrl: 'https://picsum.photos/seed/paint/300/200',
-          actionLabel: 'Copy Code',
         ),
       ],
     ),
@@ -100,28 +109,28 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
 
   final List<StyleOption> _styles = const [
     StyleOption(
-      title: 'Scandinavian',
-      imageUrl: 'https://picsum.photos/seed/scandinavian/900/1200',
+      title: 'Modern Minimalist',
+      imageUrl: 'https://picsum.photos/seed/exterior-modern/1100/1400',
     ),
     StyleOption(
-      title: 'Japandi',
-      imageUrl: 'https://picsum.photos/seed/japandi/900/1200',
+      title: 'Tropical Villa',
+      imageUrl: 'https://picsum.photos/seed/exterior-tropical/1100/1400',
     ),
     StyleOption(
-      title: 'Luxury Hotel',
-      imageUrl: 'https://picsum.photos/seed/luxuryhotel/900/1200',
+      title: 'Coastal Contemporary',
+      imageUrl: 'https://picsum.photos/seed/exterior-coastal/1100/1400',
     ),
     StyleOption(
-      title: 'Minimalist',
-      imageUrl: 'https://picsum.photos/seed/minimalist/900/1200',
+      title: 'Rustic Cabin',
+      imageUrl: 'https://picsum.photos/seed/exterior-cabin/1100/1400',
     ),
     StyleOption(
-      title: 'Modern Industrial',
-      imageUrl: 'https://picsum.photos/seed/industrial/900/1200',
+      title: 'Mediterranean',
+      imageUrl: 'https://picsum.photos/seed/exterior-mediterranean/1100/1400',
     ),
     StyleOption(
-      title: "Kid's Bedroom Themes",
-      imageUrl: 'https://picsum.photos/seed/kids/900/1200',
+      title: 'Urban Townhouse',
+      imageUrl: 'https://picsum.photos/seed/exterior-townhouse/1100/1400',
     ),
   ];
 
@@ -164,11 +173,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   void _handleNavTap(int index) {
     if (_isGenerating) return;
     if (index >= 1 && !_hasUploaded) {
-      _showToast('Upload a room photo first.');
+      _showToast('Upload an exterior photo first.');
       return;
     }
     if (index >= 2 && _selectedStyle == null) {
-      _showToast('Select a design style first.');
+      _showToast('Select a facade style first.');
       return;
     }
     if (index >= 3 && !_hasResultReady) {
@@ -194,7 +203,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   void _handleNext() {
     if (_currentStep == 0) {
       if (!_hasUploaded) {
-        _showToast('Upload a room photo to continue.');
+        _showToast('Upload a facade photo to continue.');
         return;
       }
       _goToStep(1);
@@ -237,9 +246,11 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   void _simulateUpload(String source) {
     setState(() {
       _hasUploaded = true;
-      _previewImage = const AssetImage(InteriorDesignPage.backgroundImage);
+      _previewImage = const NetworkImage(
+        'https://picsum.photos/seed/exterior-upload/1200/900',
+      );
     });
-    _showToast('Room photo added from $source.');
+    _showToast('Facade photo added from $source.');
   }
 
   void _selectStyle(StyleOption option) {
@@ -291,7 +302,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(22),
-                            child: _FullscreenBeforeAfter(
+                            child: FullscreenBeforeAfter(
                               beforeImage: _beforeImage,
                               afterImage: _afterImage,
                               reveal: localReveal,
@@ -328,23 +339,23 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   Future<void> _startGeneration() async {
     setState(() {
       _isGenerating = true;
-      _generationProgress = 0.2;
-      _generationStatus = 'Queued (2/10)';
+      _generationProgress = 0.22;
+      _generationStatus = 'Queued (1/8)';
       _hasResultReady = false;
     });
 
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     setState(() {
-      _generationProgress = 0.55;
-      _generationStatus = 'Processing design...';
+      _generationProgress = 0.58;
+      _generationStatus = 'Analyzing facade...';
     });
 
     await Future.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
     setState(() {
       _generationProgress = 1.0;
-      _generationStatus = 'Complete';
+      _generationStatus = 'Rendering new look...';
     });
 
     await Future.delayed(const Duration(milliseconds: 350));
@@ -370,7 +381,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     if (!mounted) return;
     setState(() {
       _generationProgress = 0.52;
-      _generationStatus = 'Gathering products...';
+      _generationStatus = 'Sourcing materials...';
     });
 
     await Future.delayed(const Duration(milliseconds: 700));
@@ -416,14 +427,14 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              InteriorDesignPage.backgroundImage,
+              ExteriorDesignPage.backgroundImage,
               fit: BoxFit.cover,
             ),
           ),
           const Positioned.fill(
             child: DecoratedBox(
               decoration: BoxDecoration(
-                gradient: InteriorDesignPage.backgroundGradient,
+                gradient: ExteriorDesignPage.backgroundGradient,
               ),
             ),
           ),
@@ -448,7 +459,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Interior AI Designer',
+                            'Exterior AI Designer',
                             style: textTheme.bodySmall?.copyWith(
                               color: Colors.white70,
                             ),
@@ -482,6 +493,28 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                             hasUpload: _hasUploaded,
                             onCapture: () => _simulateUpload('camera'),
                             onGallery: () => _simulateUpload('gallery'),
+                            title: 'Upload Exterior Photo',
+                            subtitle:
+                                'Upload a clear photo of your home facade to start the redesign.',
+                            emptyLabel: 'Add exterior photo',
+                            readyLabel: 'Exterior photo ready',
+                            photoTips: const [
+                              PhotoTip(
+                                icon: Icons.wb_sunny_outlined,
+                                text:
+                                    'Shoot during soft daylight to avoid harsh shadows.',
+                              ),
+                              PhotoTip(
+                                icon: Icons.crop_landscape,
+                                text:
+                                    'Capture the full facade, landscaping, and driveway.',
+                              ),
+                              PhotoTip(
+                                icon: Icons.straighten,
+                                text:
+                                    'Hold the camera straight-on to avoid distortion.',
+                              ),
+                            ],
                           ),
                         ),
                         GlassPanel(
@@ -559,118 +592,6 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
             ),
         ],
       ),
-    );
-  }
-}
-
-class _FullscreenBeforeAfter extends StatelessWidget {
-  const _FullscreenBeforeAfter({
-    required this.beforeImage,
-    required this.afterImage,
-    required this.reveal,
-    required this.onRevealChanged,
-  });
-
-  final ImageProvider beforeImage;
-  final ImageProvider afterImage;
-  final double reveal;
-  final ValueChanged<double> onRevealChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Positioned.fill(
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              image: DecorationImage(image: beforeImage, fit: BoxFit.cover),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final double clampedReveal = reveal.clamp(0.0, 1.0).toDouble();
-              final double handleX = (constraints.maxWidth * clampedReveal)
-                  .clamp(0.0, constraints.maxWidth);
-
-              void updateReveal(Offset position) {
-                final dx = position.dx.clamp(0.0, constraints.maxWidth);
-                onRevealChanged(dx / constraints.maxWidth);
-              }
-
-              return GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                onTapDown: (details) => updateReveal(details.localPosition),
-                onHorizontalDragStart: (details) =>
-                    updateReveal(details.localPosition),
-                onHorizontalDragUpdate: (details) =>
-                    updateReveal(details.localPosition),
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: ClipRect(
-                        clipper: RevealClipper(handleX),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: afterImage,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: handleX - 1,
-                      top: 0,
-                      bottom: 0,
-                      child: Container(
-                        width: 2,
-                        color: Colors.white.withValues(alpha: 0.9),
-                      ),
-                    ),
-                    Positioned(
-                      left: handleX - 22,
-                      top: constraints.maxHeight / 2 - 22,
-                      child: Container(
-                        width: 44,
-                        height: 44,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.32),
-                              blurRadius: 10,
-                              offset: const Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.swap_horiz,
-                          size: 20,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const Positioned(
-                      left: 12,
-                      top: 12,
-                      child: ResultBadge(label: 'Before'),
-                    ),
-                    const Positioned(
-                      right: 12,
-                      top: 12,
-                      child: ResultBadge(label: 'After'),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
     );
   }
 }

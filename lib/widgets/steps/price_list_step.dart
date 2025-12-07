@@ -1,4 +1,4 @@
-import 'package:ai_home_design/page/interior_design/models/design_models.dart';
+import 'package:ai_home_design/models/design_models.dart';
 import 'package:flutter/material.dart';
 
 class PriceListStep extends StatelessWidget {

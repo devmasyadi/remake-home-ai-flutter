@@ -1,4 +1,4 @@
-import 'package:ai_home_design/page/interior_design/widgets/step_header.dart';
+import 'package:ai_home_design/widgets/step_header.dart';
 import 'package:ai_home_design/widgets/app_buttons.dart';
 import 'package:flutter/material.dart';
 
@@ -55,18 +55,16 @@ class ResultStep extends StatelessWidget {
                 Positioned.fill(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final double clampedReveal =
-                          reveal.clamp(0.0, 1.0).toDouble();
+                      final double clampedReveal = reveal
+                          .clamp(0.0, 1.0)
+                          .toDouble();
                       final double handleX =
                           (constraints.maxWidth * clampedReveal)
                               .clamp(0.0, constraints.maxWidth)
                               .toDouble();
 
                       void updateReveal(Offset position) {
-                        final dx = position.dx.clamp(
-                          0.0,
-                          constraints.maxWidth,
-                        );
+                        final dx = position.dx.clamp(0.0, constraints.maxWidth);
                         onRevealChanged(dx / constraints.maxWidth);
                       }
 

@@ -1,5 +1,5 @@
-import 'package:ai_home_design/page/interior_design/widgets/photo_preview.dart';
-import 'package:ai_home_design/page/interior_design/widgets/step_header.dart';
+import 'package:ai_home_design/widgets/photo_preview.dart';
+import 'package:ai_home_design/widgets/step_header.dart';
 import 'package:flutter/material.dart';
 
 class UploadStep extends StatelessWidget {
@@ -47,11 +47,7 @@ class UploadStep extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        StepHeader(
-          textTheme: textTheme,
-          title: title,
-          subtitle: subtitle,
-        ),
+        StepHeader(textTheme: textTheme, title: title, subtitle: subtitle),
         const SizedBox(height: 18),
         PhotoPreview(
           image: previewImage,
@@ -74,18 +70,15 @@ class UploadStep extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: List.generate(
-                photoTips.length,
-                (index) {
-                  final tip = photoTips[index];
-                  return Padding(
-                    padding: EdgeInsets.only(
-                      bottom: index == photoTips.length - 1 ? 0 : 10,
-                    ),
-                    child: TipItem(icon: tip.icon, text: tip.text),
-                  );
-                },
-              ),
+              children: List.generate(photoTips.length, (index) {
+                final tip = photoTips[index];
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: index == photoTips.length - 1 ? 0 : 10,
+                  ),
+                  child: TipItem(icon: tip.icon, text: tip.text),
+                );
+              }),
             ),
           ),
         ),
