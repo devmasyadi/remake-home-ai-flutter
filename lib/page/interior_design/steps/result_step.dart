@@ -46,7 +46,7 @@ class ResultStep extends StatelessWidget {
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: afterImage,
+                        image: beforeImage,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -55,44 +55,56 @@ class ResultStep extends StatelessWidget {
                 Positioned.fill(
                   child: LayoutBuilder(
                     builder: (context, constraints) {
-                      final width = constraints.maxWidth * reveal;
-                      return Stack(
-                        children: [
-                          Positioned.fill(
-                            child: ClipRect(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                widthFactor: reveal,
+                      final double clampedReveal =
+                          reveal.clamp(0.0, 1.0).toDouble();
+                      final double handleX =
+                          (constraints.maxWidth * clampedReveal)
+                              .clamp(0.0, constraints.maxWidth)
+                              .toDouble();
+
+                      void updateReveal(Offset position) {
+                        final dx = position.dx.clamp(
+                          0.0,
+                          constraints.maxWidth,
+                        );
+                        onRevealChanged(dx / constraints.maxWidth);
+                      }
+
+                      return GestureDetector(
+                        behavior: HitTestBehavior.translucent,
+                        onTapDown: (details) =>
+                            updateReveal(details.localPosition),
+                        onHorizontalDragStart: (details) =>
+                            updateReveal(details.localPosition),
+                        onHorizontalDragUpdate: (details) =>
+                            updateReveal(details.localPosition),
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: ClipRect(
+                                clipper: _RevealClipper(handleX),
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
-                                      image: beforeImage,
+                                      image: afterImage,
                                       fit: BoxFit.cover,
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          Positioned(
-                            left: width - 1,
-                            top: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 2,
-                              color: Colors.white.withValues(alpha: 0.8),
+                            Positioned(
+                              left: handleX - 1,
+                              top: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 2,
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
                             ),
-                          ),
-                          Positioned(
-                            left: width - 24,
-                            top: constraints.maxHeight / 2 - 18,
-                            child: GestureDetector(
-                              onPanUpdate: (details) {
-                                final delta =
-                                    details.localPosition.dx /
-                                    constraints.maxWidth;
-                                onRevealChanged(delta);
-                              },
+                            Positioned(
+                              left: handleX - 18,
+                              top: constraints.maxHeight / 2 - 18,
                               child: Container(
                                 width: 36,
                                 height: 36,
@@ -116,34 +128,34 @@ class ResultStep extends StatelessWidget {
                                 ),
                               ),
                             ),
-                          ),
-                          const Positioned(
-                            left: 10,
-                            top: 10,
-                            child: ResultBadge(label: 'Before'),
-                          ),
-                          const Positioned(
-                            right: 10,
-                            top: 10,
-                            child: ResultBadge(label: 'After'),
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            right: 10,
-                            child: IconPill(
-                              icon: Icons.zoom_out_map,
-                              onTap: onFullscreen,
+                            const Positioned(
+                              left: 10,
+                              top: 10,
+                              child: ResultBadge(label: 'Before'),
                             ),
-                          ),
-                          Positioned(
-                            bottom: 10,
-                            right: 56,
-                            child: IconPill(
-                              icon: Icons.refresh,
-                              onTap: onRegenerate,
+                            const Positioned(
+                              right: 10,
+                              top: 10,
+                              child: ResultBadge(label: 'After'),
                             ),
-                          ),
-                        ],
+                            Positioned(
+                              bottom: 10,
+                              right: 10,
+                              child: IconPill(
+                                icon: Icons.zoom_out_map,
+                                onTap: onFullscreen,
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 10,
+                              right: 56,
+                              child: IconPill(
+                                icon: Icons.refresh,
+                                onTap: onRegenerate,
+                              ),
+                            ),
+                          ],
+                        ),
                       );
                     },
                   ),
@@ -201,4 +213,20 @@ class ResultBadge extends StatelessWidget {
       ),
     );
   }
+}
+
+class _RevealClipper extends CustomClipper<Rect> {
+  const _RevealClipper(this.handleX);
+
+  final double handleX;
+
+  @override
+  Rect getClip(Size size) {
+    final x = handleX.clamp(0.0, size.width);
+    return Rect.fromLTRB(x, 0, size.width, size.height);
+  }
+
+  @override
+  bool shouldReclip(covariant _RevealClipper oldClipper) =>
+      oldClipper.handleX != handleX;
 }

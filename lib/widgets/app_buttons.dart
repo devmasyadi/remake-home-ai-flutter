@@ -43,7 +43,7 @@ class PrimaryButton extends StatelessWidget {
                   ? Colors.white
                   : Colors.white.withValues(alpha: 0.6),
               fontWeight: FontWeight.w700,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
         ),
@@ -82,7 +82,7 @@ class SecondaryButton extends StatelessWidget {
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w700,
-              fontSize: 16,
+              fontSize: 14,
             ),
           ),
         ),
@@ -173,6 +173,7 @@ class ActionPill extends StatelessWidget {
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
+                  fontSize: 14,
                 ),
               ),
             ],
