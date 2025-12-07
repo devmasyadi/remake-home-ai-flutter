@@ -8,8 +8,10 @@ class GeneratingOverlay extends StatelessWidget {
     required this.status,
     required this.progress,
     super.key,
+    this.title,
   });
 
+  final String? title;
   final String status;
   final double progress;
 
@@ -44,7 +46,7 @@ class GeneratingOverlay extends StatelessWidget {
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     SizedBox(
                       width: 18,
                       height: 18,
@@ -55,7 +57,7 @@ class GeneratingOverlay extends StatelessWidget {
                     ),
                     SizedBox(width: 10),
                     Text(
-                      'Generating your design...',
+                      title ?? 'Generating your design...',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w700,

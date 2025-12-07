@@ -45,6 +45,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
   double _reveal = 0.52;
   bool _isGenerating = false;
   double _generationProgress = 0.2;
+  String _generationTitle = 'Generating your design...';
   String _generationStatus = 'Queued (2/10)';
   bool _hasResultReady = false;
 
@@ -330,6 +331,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       _isGenerating = true;
       _generationProgress = 0.2;
       _generationStatus = 'Queued (2/10)';
+      _generationTitle = 'Generating your design...';
       _hasResultReady = false;
     });
 
@@ -364,6 +366,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       _isGenerating = true;
       _generationProgress = 0.18;
       _generationStatus = 'Queued (price list)';
+      _generationTitle = 'Generating price list...';
     });
 
     await Future.delayed(const Duration(milliseconds: 700));
@@ -556,6 +559,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
             GeneratingOverlay(
               status: _generationStatus,
               progress: _generationProgress,
+              title: _generationTitle,
             ),
         ],
       ),
