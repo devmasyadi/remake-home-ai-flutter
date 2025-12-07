@@ -133,7 +133,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
       case 2:
         return _isGenerating ? 'Generating...' : 'Generate';
       case 3:
-        return 'Price List';
+        return 'Get Price List';
       default:
         return 'Save List';
     }
@@ -217,7 +217,8 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     }
 
     if (_currentStep == 3) {
-      _goToStep(4);
+      if (_isGenerating) return;
+      _startPriceList();
       return;
     }
 
@@ -255,6 +256,75 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     });
   }
 
+  Future<void> _openFullscreenPreview() async {
+    await showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Close preview',
+      barrierColor: Colors.black.withValues(alpha: 0.82),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        double localReveal = _reveal;
+
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            void update(double value) {
+              final adjusted = value.clamp(0.05, 0.95);
+              dialogSetState(() => localReveal = adjusted);
+              _updateReveal(adjusted);
+            }
+
+            return SafeArea(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Stack(
+                  children: [
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 22,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: 1100,
+                            maxHeight: 900,
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(22),
+                            child: _FullscreenBeforeAfter(
+                              beforeImage: _beforeImage,
+                              afterImage: _afterImage,
+                              reveal: localReveal,
+                              onRevealChanged: update,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: 12,
+                      right: 12,
+                      child: Material(
+                        color: Colors.black.withValues(alpha: 0.6),
+                        shape: const CircleBorder(),
+                        clipBehavior: Clip.antiAlias,
+                        child: IconButton(
+                          icon: const Icon(Icons.close, color: Colors.white),
+                          splashRadius: 22,
+                          onPressed: () => Navigator.of(context).pop(),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future<void> _startGeneration() async {
     setState(() {
       _isGenerating = true;
@@ -285,6 +355,45 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
     });
     _goToStep(3);
     _showToast('Design ready!');
+  }
+
+  Future<void> _startPriceList() async {
+    if (_isGenerating) return;
+
+    setState(() {
+      _isGenerating = true;
+      _generationProgress = 0.18;
+      _generationStatus = 'Queued (price list)';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (!mounted) return;
+    setState(() {
+      _generationProgress = 0.52;
+      _generationStatus = 'Gathering products...';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (!mounted) return;
+    setState(() {
+      _generationProgress = 0.86;
+      _generationStatus = 'Formatting list...';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 480));
+    if (!mounted) return;
+    setState(() {
+      _generationProgress = 1.0;
+      _generationStatus = 'Price list ready';
+    });
+
+    await Future.delayed(const Duration(milliseconds: 260));
+    if (!mounted) return;
+    setState(() {
+      _isGenerating = false;
+    });
+    _goToStep(4);
+    _showToast('Price list ready!');
   }
 
   void _showToast(String message) {
@@ -404,8 +513,7 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
                                 _showToast('Sharing design...'),
                             onSave: () =>
                                 _showToast('Design saved to gallery.'),
-                            onFullscreen: () =>
-                                _showToast('Opening fullscreen preview.'),
+                            onFullscreen: _openFullscreenPreview,
                             onRegenerate: () =>
                                 _showToast('Regenerating design...'),
                           ),
@@ -451,6 +559,118 @@ class _InteriorDesignPageState extends State<InteriorDesignPage> {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _FullscreenBeforeAfter extends StatelessWidget {
+  const _FullscreenBeforeAfter({
+    required this.beforeImage,
+    required this.afterImage,
+    required this.reveal,
+    required this.onRevealChanged,
+  });
+
+  final ImageProvider beforeImage;
+  final ImageProvider afterImage;
+  final double reveal;
+  final ValueChanged<double> onRevealChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              image: DecorationImage(image: beforeImage, fit: BoxFit.cover),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final double clampedReveal = reveal.clamp(0.0, 1.0).toDouble();
+              final double handleX = (constraints.maxWidth * clampedReveal)
+                  .clamp(0.0, constraints.maxWidth);
+
+              void updateReveal(Offset position) {
+                final dx = position.dx.clamp(0.0, constraints.maxWidth);
+                onRevealChanged(dx / constraints.maxWidth);
+              }
+
+              return GestureDetector(
+                behavior: HitTestBehavior.translucent,
+                onTapDown: (details) => updateReveal(details.localPosition),
+                onHorizontalDragStart: (details) =>
+                    updateReveal(details.localPosition),
+                onHorizontalDragUpdate: (details) =>
+                    updateReveal(details.localPosition),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: ClipRect(
+                        clipper: RevealClipper(handleX),
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: afterImage,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: handleX - 1,
+                      top: 0,
+                      bottom: 0,
+                      child: Container(
+                        width: 2,
+                        color: Colors.white.withValues(alpha: 0.9),
+                      ),
+                    ),
+                    Positioned(
+                      left: handleX - 22,
+                      top: constraints.maxHeight / 2 - 22,
+                      child: Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.32),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
+                        ),
+                        child: const Icon(
+                          Icons.swap_horiz,
+                          size: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                    const Positioned(
+                      left: 12,
+                      top: 12,
+                      child: ResultBadge(label: 'Before'),
+                    ),
+                    const Positioned(
+                      right: 12,
+                      top: 12,
+                      child: ResultBadge(label: 'After'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

@@ -82,7 +82,7 @@ class ResultStep extends StatelessWidget {
                           children: [
                             Positioned.fill(
                               child: ClipRect(
-                                clipper: _RevealClipper(handleX),
+                                clipper: RevealClipper(handleX),
                                 child: DecoratedBox(
                                   decoration: BoxDecoration(
                                     image: DecorationImage(
@@ -215,8 +215,8 @@ class ResultBadge extends StatelessWidget {
   }
 }
 
-class _RevealClipper extends CustomClipper<Rect> {
-  const _RevealClipper(this.handleX);
+class RevealClipper extends CustomClipper<Rect> {
+  const RevealClipper(this.handleX);
 
   final double handleX;
 
@@ -227,6 +227,6 @@ class _RevealClipper extends CustomClipper<Rect> {
   }
 
   @override
-  bool shouldReclip(covariant _RevealClipper oldClipper) =>
+  bool shouldReclip(covariant RevealClipper oldClipper) =>
       oldClipper.handleX != handleX;
 }
