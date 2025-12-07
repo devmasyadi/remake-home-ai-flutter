@@ -9,6 +9,25 @@ class UploadStep extends StatelessWidget {
     required this.hasUpload,
     required this.onCapture,
     required this.onGallery,
+    this.title = 'Upload Room Photo',
+    this.subtitle =
+        'Upload a photo of your room to get started with our AI designer.',
+    this.photoTips = const [
+      PhotoTip(
+        icon: Icons.lightbulb_outline,
+        text: 'Use good, natural lighting.',
+      ),
+      PhotoTip(
+        icon: Icons.fullscreen,
+        text: 'Capture as much of the room as possible.',
+      ),
+      PhotoTip(
+        icon: Icons.inventory_2_outlined,
+        text: 'Include furniture for context.',
+      ),
+    ],
+    this.emptyLabel = 'Add room photo',
+    this.readyLabel = 'Photo ready',
     super.key,
   });
 
@@ -17,6 +36,11 @@ class UploadStep extends StatelessWidget {
   final bool hasUpload;
   final VoidCallback onCapture;
   final VoidCallback onGallery;
+  final String title;
+  final String subtitle;
+  final List<PhotoTip> photoTips;
+  final String emptyLabel;
+  final String readyLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +49,8 @@ class UploadStep extends StatelessWidget {
       children: [
         StepHeader(
           textTheme: textTheme,
-          title: 'Upload Room Photo',
-          subtitle:
-              'Upload a photo of your room to get started with our AI designer.',
+          title: title,
+          subtitle: subtitle,
         ),
         const SizedBox(height: 18),
         PhotoPreview(
@@ -35,6 +58,8 @@ class UploadStep extends StatelessWidget {
           hasUpload: hasUpload,
           onCapture: onCapture,
           onGallery: onGallery,
+          emptyLabel: emptyLabel,
+          readyLabel: readyLabel,
         ),
         const SizedBox(height: 20),
         Text(
@@ -49,26 +74,29 @@ class UploadStep extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             child: Column(
-              children: const [
-                TipItem(
-                  icon: Icons.lightbulb_outline,
-                  text: 'Use good, natural lighting.',
-                ),
-                SizedBox(height: 10),
-                TipItem(
-                  icon: Icons.fullscreen,
-                  text: 'Capture as much of the room as possible.',
-                ),
-                SizedBox(height: 10),
-                TipItem(
-                  icon: Icons.inventory_2_outlined,
-                  text: 'Include furniture for context.',
-                ),
-              ],
+              children: List.generate(
+                photoTips.length,
+                (index) {
+                  final tip = photoTips[index];
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      bottom: index == photoTips.length - 1 ? 0 : 10,
+                    ),
+                    child: TipItem(icon: tip.icon, text: tip.text),
+                  );
+                },
+              ),
             ),
           ),
         ),
       ],
     );
   }
+}
+
+class PhotoTip {
+  const PhotoTip({required this.icon, required this.text});
+
+  final IconData icon;
+  final String text;
 }

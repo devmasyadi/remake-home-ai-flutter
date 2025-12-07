@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ai_home_design/page/exterior_design/exterior_design_page.dart';
 import 'package:ai_home_design/page/interior_design/interior_design_page.dart';
 import 'package:ai_home_design/widgets/app_buttons.dart';
 import 'package:flutter/material.dart';
@@ -31,11 +32,19 @@ class _MainDesignOptionPageState extends State<MainDesignOptionPage> {
           );
         },
       ),
-      const ActionOption(
+      ActionOption(
         icon: Icons.apartment,
         title: 'Exterior Design',
         subtitle: "Transform your home's facade",
-        color: Color(0xFFB8C7D9),
+        color: const Color(0xFFB8C7D9),
+        onTap: (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ExteriorDesignPage(),
+            ),
+          );
+        },
       ),
       const ActionOption(
         icon: Icons.cleaning_services_outlined,

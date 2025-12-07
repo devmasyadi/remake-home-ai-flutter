@@ -8,6 +8,8 @@ class PhotoPreview extends StatelessWidget {
     required this.hasUpload,
     required this.onCapture,
     required this.onGallery,
+    this.emptyLabel = 'Add room photo',
+    this.readyLabel = 'Photo ready',
     super.key,
   });
 
@@ -15,6 +17,8 @@ class PhotoPreview extends StatelessWidget {
   final bool hasUpload;
   final VoidCallback onCapture;
   final VoidCallback onGallery;
+  final String emptyLabel;
+  final String readyLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +72,7 @@ class PhotoPreview extends StatelessWidget {
                   ),
                   const SizedBox(width: 6),
                   Text(
-                    hasUpload ? 'Photo ready' : 'Add room photo',
+                    hasUpload ? readyLabel : emptyLabel,
                     style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
