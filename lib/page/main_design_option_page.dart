@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:ai_home_design/page/cleanup_page.dart';
 import 'package:ai_home_design/page/exterior_design_page.dart';
 import 'package:ai_home_design/page/interior_design_page.dart';
 import 'package:ai_home_design/widgets/app_buttons.dart';
@@ -44,11 +45,17 @@ class _MainDesignOptionPageState extends State<MainDesignOptionPage> {
           );
         },
       ),
-      const ActionOption(
+      ActionOption(
         icon: Icons.cleaning_services_outlined,
         title: 'Cleanup',
         subtitle: 'Delete selected objects',
-        color: Color(0xFFEAB485),
+        color: const Color(0xFFEAB485),
+        onTap: (BuildContext context) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CleanupPage()),
+          );
+        },
       ),
       const ActionOption(
         icon: Icons.autorenew,
